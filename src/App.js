@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 export default function App() {
 	const questions = [
@@ -52,19 +52,36 @@ export default function App() {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [showScore, setShowScore] = useState(false);
 	const [score, setScore] = useState(0);
+	const [timeLeft, setTimeLeft] = useState(10); // Set the timer for each question
 
-	const handleAnswerOptionClick = (isCorrect) => {
+	const handleAnswerOptionClick = useCallback((isCorrect) => {
 		if (isCorrect) {
-			setScore(score + 1);
+			setScore(score => score + 1);
 		}
 
 		const nextQuestion = currentQuestion + 1;
 		if (nextQuestion < questions.length) {
 			setCurrentQuestion(nextQuestion);
+			setTimeLeft(10); // Reset the timer for the next question
 		} else {
 			setShowScore(true);
 		}
-	};
+	}, [currentQuestion, questions.length]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setTimeLeft((prevTimeLeft) => {
+				if (prevTimeLeft === 1) {
+					clearInterval(timer);
+					handleAnswerOptionClick(false); // Move to the next question when the timer runs out
+					return 10; // Reset the timer
+				}
+				return prevTimeLeft - 1;
+			});
+		}, 1000);
+
+		return () => clearInterval(timer);
+	}, [handleAnswerOptionClick]);
 
 	return (
 		<div className='app'>
@@ -79,6 +96,9 @@ export default function App() {
 							<span>Question {currentQuestion + 1}</span>/{questions.length}
 						</div>
 						<div className='question-text'>{questions[currentQuestion].questionText}</div>
+					</div>
+					<div className='timer-section'>
+						Time left: {timeLeft} seconds
 					</div>
 					<div className='answer-section'>
 						{questions[currentQuestion].answerOptions.map((answerOption, index) => (
