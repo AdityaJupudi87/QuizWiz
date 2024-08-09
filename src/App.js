@@ -3,48 +3,48 @@ import React, { useState, useEffect, useCallback } from 'react';
 export default function App() {
 	const questions = [
 		{
-			questionText: 'What does CPU stand for?',
+			questionText: 'Which sentence is grammatically correct?',
 			answerOptions: [
-				{ answerText: 'Central Process Unit', isCorrect: false },
-				{ answerText: 'Central Processing Unit', isCorrect: true },
-				{ answerText: 'Computer Personal Unit', isCorrect: false },
-				{ answerText: 'Central Processor Unit', isCorrect: false },
+				{ answerText: 'She don\'t like pizza.', isCorrect: false },
+				{ answerText: 'She doesn\'t like pizza.', isCorrect: true },
+				{ answerText: 'She doesn\'t likes pizza.', isCorrect: false },
+				{ answerText: 'She don\'t likes pizza.', isCorrect: false },
 			],
 		},
 		{
-			questionText: 'Which language is used for web apps?',
+			questionText: 'Choose the correct past tense form of the verb "go":',
 			answerOptions: [
-				{ answerText: 'PHP', isCorrect: false },
-				{ answerText: 'Python', isCorrect: false },
-				{ answerText: 'JavaScript', isCorrect: true },
-				{ answerText: 'All', isCorrect: true },
+				{ answerText: 'Goed', isCorrect: false },
+				{ answerText: 'Going', isCorrect: false },
+				{ answerText: 'Went', isCorrect: true },
+				{ answerText: 'Goes', isCorrect: false },
 			],
 		},
 		{
-			questionText: 'What does HTML stand for?',
+			questionText: 'Which of the following sentences uses the correct subject-verb agreement?',
 			answerOptions: [
-				{ answerText: 'Hyper Text Markup Language', isCorrect: true },
-				{ answerText: 'Hyperlinks and Text Markup Language', isCorrect: false },
-				{ answerText: 'Home Tool Markup Language', isCorrect: false },
-				{ answerText: 'Hyper Tool Markup Language', isCorrect: false },
+				{ answerText: 'The cats runs fast.', isCorrect: false },
+				{ answerText: 'The cat run fast.', isCorrect: false },
+				{ answerText: 'The cat runs fast.', isCorrect: true },
+				{ answerText: 'The cats run fast.', isCorrect: true },
 			],
 		},
 		{
-			questionText: 'Which company developed the Java programming language?',
+			questionText: 'Identify the correct use of a comma:',
 			answerOptions: [
-				{ answerText: 'Microsoft', isCorrect: false },
-				{ answerText: 'Apple', isCorrect: false },
-				{ answerText: 'Sun Microsystems', isCorrect: true },
-				{ answerText: 'IBM', isCorrect: false },
+				{ answerText: 'I like pizza, and ice cream.', isCorrect: true },
+				{ answerText: 'I like pizza and, ice cream.', isCorrect: false },
+				{ answerText: 'I like, pizza and ice cream.', isCorrect: false },
+				{ answerText: 'I, like pizza and ice cream.', isCorrect: false },
 			],
 		},
 		{
-			questionText: 'Which of the following is a NoSQL database?',
+			questionText: 'Which sentence is correctly punctuated?',
 			answerOptions: [
-				{ answerText: 'MySQL', isCorrect: false },
-				{ answerText: 'PostgreSQL', isCorrect: false },
-				{ answerText: 'MongoDB', isCorrect: true },
-				{ answerText: 'Oracle', isCorrect: false },
+				{ answerText: 'It’s raining today, but I don’t have an umbrella.', isCorrect: true },
+				{ answerText: 'It’s raining today but, I don’t have an umbrella.', isCorrect: false },
+				{ answerText: 'It’s raining today but I don’t have an umbrella.', isCorrect: false },
+				{ answerText: 'It’s raining today; but I don’t have an umbrella.', isCorrect: false },
 			],
 		},
 	];
@@ -52,7 +52,7 @@ export default function App() {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [showScore, setShowScore] = useState(false);
 	const [score, setScore] = useState(0);
-	const [timeLeft, setTimeLeft] = useState(10); // Set the timer for each question
+	const [timeLeft, setTimeLeft] = useState(10);
 
 	const handleAnswerOptionClick = useCallback((isCorrect) => {
 		if (isCorrect) {
@@ -62,7 +62,7 @@ export default function App() {
 		const nextQuestion = currentQuestion + 1;
 		if (nextQuestion < questions.length) {
 			setCurrentQuestion(nextQuestion);
-			setTimeLeft(10); // Reset the timer for the next question
+			setTimeLeft(10);
 		} else {
 			setShowScore(true);
 		}
@@ -73,8 +73,8 @@ export default function App() {
 			setTimeLeft((prevTimeLeft) => {
 				if (prevTimeLeft === 1) {
 					clearInterval(timer);
-					handleAnswerOptionClick(false); // Move to the next question when the timer runs out
-					return 10; // Reset the timer
+					handleAnswerOptionClick(false);
+					return 10;
 				}
 				return prevTimeLeft - 1;
 			});
@@ -83,11 +83,20 @@ export default function App() {
 		return () => clearInterval(timer);
 	}, [handleAnswerOptionClick]);
 
+	const getRating = (score) => {
+		const percentage = (score / questions.length) * 100;
+		if (percentage >= 80) return 'Excellent';
+		if (percentage >= 60) return 'Good';
+		if (percentage >= 40) return 'Average';
+		return 'Needs Improvement';
+	};
+
 	return (
 		<div className='app'>
 			{showScore ? (
 				<div className='score-section'>
-					You scored {score} out of {questions.length}
+					You scored {score} out of {questions.length}. <br />
+					Rating: {getRating(score)}
 				</div>
 			) : (
 				<>
