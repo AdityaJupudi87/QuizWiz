@@ -3,17 +3,17 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
         stage('Build') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test' // If you have tests
+                bat 'npm test' // If you have tests
             }
         }
     }
